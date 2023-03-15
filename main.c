@@ -5,9 +5,9 @@
 #include <errno.h>
 #include <math.h>
 
-#define WIDTH 20
-#define HEIGHT 20
-#define PPM_SCALER 50
+#define WIDTH 100
+#define HEIGHT 100
+#define PPM_SCALER 25
 
 typedef float layer_t[HEIGHT][WIDTH];
 
@@ -27,11 +27,32 @@ void layer_fill_rect(layer_t layer, int x, int y, int w, int h, float value)
     int x0 = clampi(x, 0, WIDTH - 1);
     int y0 = clampi(y, 0, HEIGHT - 1);
     int x1 = clampi(x0 + w - 1, 0, WIDTH - 1);
-    int y1 = clampi(y0 + w - 1, 0, HEIGHT - 1);
+    int y1 = clampi(y0 + h - 1, 0, HEIGHT - 1);
 
     for (int y = y0; y <= y1; ++y) {
         for (int x = x0; x <= x1; ++x) {
             layer[y][x] = value;
+        }
+    }
+}
+
+void layer_fill_circle(layer_t layer, int cx, int cy, int r, float value)
+{
+    assert(r > 0);
+
+    int x0 = clampi(cx - r, 0, WIDTH - 1);
+    int y0 = clampi(cy - r, 0, HEIGHT - 1);
+    int x1 = clampi(cx + r, 0, WIDTH - 1);
+    int y1 = clampi(cy + r, 0, HEIGHT - 1);
+
+    for (int y = y0; y <= y1; ++y) {
+        for (int x = x0; x <= x1; ++x) {
+            int dx = x - cx;
+            int dy = y - cy;
+
+            if (dx * dx + dy * dy <= r * r) {
+                layer[y][x] = value;
+            }
         }
     }
 }
@@ -82,7 +103,7 @@ static layer_t weights;
 
 int main(void)
 {
-    layer_fill_rect(inputs, 0, 0, WIDTH / 2, HEIGHT / 2, 1.0f);
+    layer_fill_circle(inputs, WIDTH / 2, HEIGHT / 2, WIDTH / 2, 1.0f);
     layer_save_as_ppm(inputs, "inputs.ppm");
 
     float output = feed_forward(inputs, weights);
