@@ -7,6 +7,7 @@
 
 #define WIDTH 20
 #define HEIGHT 20
+#define PPM_SCALER 50
 
 typedef float layer_t[HEIGHT][WIDTH];
 
@@ -44,11 +45,11 @@ void layer_save_as_ppm(layer_t layer, const char* file_path)
         exit(1);
     }
 
-    fprintf(f, "P6\n%d %d 255\n", WIDTH, HEIGHT);
+    fprintf(f, "P6\n%d %d 255\n", WIDTH * PPM_SCALER, HEIGHT * PPM_SCALER);
 
-    for (int y = 0; y < HEIGHT; ++y) {
-        for (int x = 0; x < WIDTH; ++x) {
-            float s = layer[y][x];
+    for (int y = 0; y < HEIGHT * PPM_SCALER; ++y) {
+        for (int x = 0; x < WIDTH * PPM_SCALER; ++x) {
+            float s = layer[y / PPM_SCALER][x / PPM_SCALER];
 
             char pixel[3] = {
                 (char) floorf(255 * s),
