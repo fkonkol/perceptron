@@ -1,4 +1,5 @@
 *.dSYM
 main
 *.ppm
+*.bin
 
