@@ -85,6 +85,25 @@ void layer_save_as_ppm(layer_t layer, const char* file_path)
     fclose(f);
 }
 
+void layer_save_as_bin(layer_t layer, const char *file_path)
+{
+    FILE *f = fopen(file_path, "wb");
+
+    if (f == NULL) {
+        fprintf(stderr, "ERROR: could not open file %s: %m\n", file_path);
+        exit(1);
+    }
+
+    fwrite(layer, sizeof(layer_t), 1, f);
+
+    fclose(f);
+}
+
+void layer_load_from_bin(layer_t layer, const char *file_path)
+{
+    assert(0 && "TODO: layer_load_from_bin is not implemented yet!");
+}
+
 float feed_forward(layer_t inputs, layer_t weights)
 {
     float output = 0.0f;
@@ -104,7 +123,7 @@ static layer_t weights;
 int main(void)
 {
     layer_fill_circle(inputs, WIDTH / 2, HEIGHT / 2, WIDTH / 2, 1.0f);
-    layer_save_as_ppm(inputs, "inputs.ppm");
+    layer_save_as_bin(inputs, "inputs.bin");
 
     float output = feed_forward(inputs, weights);
     printf("output = %f\n", output);
